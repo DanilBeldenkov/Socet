@@ -1,11 +1,8 @@
 package ru.demo.socket.tcp.square;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.logging.Logger;
 
 /**
  * Работа по протоколу TCP
@@ -14,7 +11,6 @@ import java.util.logging.Logger;
  */
 @SuppressWarnings("InfiniteLoopStatement")
 public class SqServer {
-
     public static void main(String[] args) throws IOException {
         try (ServerSocket serverSocket = new ServerSocket(1020)) {
             while (true) {
@@ -23,21 +19,14 @@ public class SqServer {
             }
         }
     }
-
     private static void serverClient(Socket socket) throws IOException {
-        System.out.println("Serving client" + socket.getInetAddress());
+        System.out.println("Сервисный клиент" + socket.getInetAddress());
+        DataInputStream inputStream = new DataInputStream (socket.getInputStream());
+        DataOutputStream outputStream = new DataOutputStream (socket.getOutputStream());
+        String mess;
+        mess = inputStream.readUTF();
+        System.out.println("Результат:" + mess);
+        outputStream.writeUTF(mess);
 
-        InputStream inputStream = socket.getInputStream();
-        OutputStream outputStream = socket.getOutputStream();
-
-        while (true) {
-            int request = inputStream.read();
-            if (request == -1) {
-                break;
-            }
-            System.out.println("Request:" + request);
-            outputStream.write(request * request);
-            outputStream.flush();
-        }
     }
 }
